@@ -116,54 +116,9 @@ public class KmlParser {
 	public static void main(String[] args) {
 
 		String path = "/home/dbhakuni/Downloads/history-07-17-2014.kml";
-
-		InputStream kmlin;
-		Map<When, Coord> trackMap = new HashMap<When, Coord>();
+		Map<When, Coord> trackMap = null;
 		try {
-			kmlin = new FileInputStream(new File(path));
-			XMLEventReader eventReader = XMLInputFactory.newInstance()
-					.createXMLEventReader(kmlin);
-			XMLEvent event = null;
-			StartElement startElement = null;
-			// EndElement endElement = null;
-			Characters characters = null;
-			int tagIs = 0;
-			String when = null;
-			String coord = null;
-			while (eventReader.hasNext()) {
-				event = eventReader.nextEvent();
-				if (event.isStartElement()) {
-					startElement = event.asStartElement();
-					if ("when".equals(startElement.getName().getLocalPart())) {
-						tagIs = 1;
-					} else if ("coord".equals(startElement.getName()
-							.getLocalPart())) {
-						tagIs = 2;
-					}
-				} else if (event.isCharacters()) {
-					characters = event.asCharacters();
-					switch (tagIs) {
-					case 1:
-						// System.out.println(characters.getData() + "<<>>"
-						// +GxUtils.getCData(characters.getData()));
-						when = GxUtils.getCData(characters.getData());
-						tagIs = 0;
-						break;
-					case 2:
-						coord = GxUtils.getCData(characters.getData());
-						tagIs = 3;
-						break;
-					}
-
-				} else if (event.isEndElement()) {
-					// endElement = event.asEndElement();
-					if (tagIs == 3) {
-						System.out.println(when + "{+}" + coord);
-						trackMap.put(new When(when), new Coord(coord));
-						tagIs = 0;
-					}
-				}
-			}
+			trackMap = (new KmlParser()).getTrackMap(path);
 			System.out.println(trackMap.size());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -175,6 +130,9 @@ public class KmlParser {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (DatatypeConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
