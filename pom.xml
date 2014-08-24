@@ -6,11 +6,11 @@
 	<version>Alpha</version>
 	<name>GeoTagPhotos</name>
 	<description>This API tags photos with the help of timestamps. Capable of tagging many formats that follow EXIF.</description>
-	
+
 	<properties>
-	  <metadata-extractor-version>2.6.2</metadata-extractor-version>
-	  <geocoder-java>0.16</geocoder-java>
-	  <JavaAPIforKml>2.2.0-SNAPSHOT</JavaAPIforKml>
+		<metadata-extractor-version>2.6.2</metadata-extractor-version>
+		<geocoder-java>0.16</geocoder-java>
+		<JavaAPIforKml>2.2.0-SNAPSHOT</JavaAPIforKml>
 	</properties>
 
 	<repositories>
@@ -23,14 +23,18 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>apache.snapshots</id>
+			<url>http://repository.apache.org/snapshots/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.drewnoakes</groupId>
 			<artifactId>metadata-extractor</artifactId>
 			<version>${metadata-extractor-version}</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>com.google.code.geocoder-java</groupId>
 			<artifactId>geocoder-java</artifactId>
@@ -40,6 +44,11 @@
 			<groupId>de.micromata.jak</groupId>
 			<artifactId>JavaAPIforKml</artifactId>
 			<version>${JavaAPIforKml}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-imaging</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
