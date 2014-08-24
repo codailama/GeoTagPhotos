@@ -94,7 +94,7 @@ public class KMLUtils {
 	 * @throws DatatypeConfigurationException
 	 * @throws IOException
 	 */
-	public static Map<When, Coord> gatTrackMap(InputStream inputStream) throws XMLStreamException, DatatypeConfigurationException, IOException{
+	public static Map<When, Coord> getTrackMap(InputStream inputStream) throws XMLStreamException, DatatypeConfigurationException, IOException{
 		return (new  KmlParser()).getTrackMap(inputStream);
 	}
 	
@@ -106,7 +106,7 @@ public class KMLUtils {
 	 * @throws DatatypeConfigurationException
 	 * @throws IOException
 	 */
-	public static Map<When, Coord> gatTrackMap(String path) throws XMLStreamException, DatatypeConfigurationException, IOException{
+	public static Map<When, Coord> getTrackMap(String path) throws XMLStreamException, DatatypeConfigurationException, IOException{
 		return (new  KmlParser()).getTrackMap(path);
 	}
 	
@@ -116,9 +116,8 @@ public class KMLUtils {
 	public static void main(String[] args) {
 		long s = Calendar.getInstance().getTimeInMillis();
 		String path = "/home/dbhakuni/Downloads/history-07-17-2014.kml";
-		KmlParser kmlParser = new  KmlParser();
 		try {
-			Map<When, Coord> map = kmlParser.getTrackMap(path);
+			Map<When, Coord> map = getTrackMap(path);
 			Coord coord = getCoordinateByTime(map, 1405658575805L, GxEnum.APPROXIMATE);
 			System.out.println(coord);
 		} catch (XMLStreamException e) {
