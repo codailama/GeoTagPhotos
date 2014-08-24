@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -36,8 +37,8 @@ public class EXIFUtils {
 	public static void main(String[] args) throws ImageReadException, ImageWriteException, IOException, ParseException {
 		String filePath = "D:\\Team Offsite\\Santosh\\IMG_20140223_222345.jpg";
 		final IImageMetadata metadata = Imaging.getMetadata(new File(filePath));
-        final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
-        Long timestamp = getTimeStampFromImage(jpegMetadata);
+		final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
+		Long timestamp = getTimeStampFromImage(jpegMetadata);
 		String path = "C:/Users/mmt3822/Downloads/history-02-23-2014.kml";
 		KmlParser kmlParser = new  KmlParser();
 		try {
@@ -54,8 +55,58 @@ public class EXIFUtils {
 			System.out.println("IOException");
 			e.printStackTrace();
 		}
-	
+
 	}
+
+	/**
+	 * To GeoTag all the images.
+	 * 
+	 * @param inputDirectoryPath
+	 * 		input directory to all the images. 
+	 * @param kmlDirectoryPath
+	 * 		Directory in which KML files reside!
+	 * @param outputDirectoryPath
+	 * 		Output directory to all the files.
+	 * @throws ImageReadException
+	 * @throws IOException
+	 * @throws ParseException
+	 * @throws ImageWriteException
+	 * @throws DatatypeConfigurationException 
+	 * @throws XMLStreamException 
+	 */
+	public static void geoTagAllImages(String inputDirectoryPath, String kmlDirectoryPath, String outputDirectoryPath) throws ImageReadException, IOException, ParseException, ImageWriteException, XMLStreamException, DatatypeConfigurationException{
+		File inputDirectory = new File(inputDirectoryPath);
+		File[] inputImages = inputDirectory.listFiles();
+		Map<When, Coord> kmlMap = loadAllKMLtoMap(kmlDirectoryPath);
+		for(File inputImage : inputImages){
+			final IImageMetadata metadata = Imaging.getMetadata(inputImage);
+			final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
+			File outputImage = new File(outputDirectoryPath, inputImage.getName());
+			Long timestamp = getTimeStampFromImage(jpegMetadata);
+			Coord coord = KMLUtils.getCoordinateByTime(kmlMap, timestamp, GxEnum.APPROXIMATE);
+			setExifGPSTag(inputImage, outputImage, coord.getLatitude(), coord.getLongitude());
+		}
+	}
+
+	/**
+	 * @param kmlDirectoryPath input directory of all the KML files.
+	 * @return
+	 * @throws XMLStreamException
+	 * @throws DatatypeConfigurationException
+	 * @throws IOException
+	 */
+	public static Map<When, Coord> loadAllKMLtoMap(String kmlDirectoryPath) throws XMLStreamException, DatatypeConfigurationException, IOException{
+		KmlParser kmlParser = new  KmlParser();
+		Map<When, Coord> kmlMap = new HashMap<When, Coord>();
+		File kmlDirectory = new File(kmlDirectoryPath);
+		File[] kmlFiles = kmlDirectory.listFiles();
+		for(File kmlFile : kmlFiles){
+			Map<When, Coord> map = kmlParser.getTrackMap(kmlFile.getPath());
+			kmlMap.putAll(map);
+		}
+		return kmlMap;
+	}
+
 
 
 	/**
@@ -121,7 +172,7 @@ public class EXIFUtils {
 		OutputStream os = null;
 		boolean canThrow = false;
 		try {
-			
+
 			final IImageMetadata metadata = Imaging.getMetadata(jpegImageFile);
 			final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
 			TiffOutputSet outputSet = setTiffOutputSet(jpegMetadata, longitude, latitude);
