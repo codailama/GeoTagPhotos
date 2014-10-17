@@ -36,7 +36,6 @@ public class KmlParser {
 	 * 
 	 */
 	public KmlParser() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public Map<When, Coord> getTrackMap(String path) throws XMLStreamException, DatatypeConfigurationException, IOException {
